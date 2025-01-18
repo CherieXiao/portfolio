@@ -57,6 +57,7 @@ form button {
     box-sizing: border-box;
 } */
 
-form lable{
+form {
   display: grid;
+  grid-template-columns: auto 1fr;
 }
