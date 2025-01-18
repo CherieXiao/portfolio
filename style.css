@@ -3,8 +3,8 @@ body {
          and use the OS’s UI font as the website font
        */
        
-    max-width: 100ch; /* Limit content width to approximately 100 characters per line */
+    max-width: 100ch;
     margin-inline: auto;
-    padding: 1rem; /* Add some space around the edges */
+    padding: 1rem;
     font: 100%/1.5 system-ui;
   }
