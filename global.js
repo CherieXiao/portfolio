@@ -13,10 +13,10 @@ function $$(selector, context = document) {
 // currentLink?.classList.add('current');
 
 let pages = [
-  { url: '/portfolio/', title: 'Home' },
-  { url: '/portfolio/projects/', title: 'Projects' },
-  { url: '/portfolio/contact/', title: 'Contact' },
-  { url: '/portfolio/CV/', title: 'CV' },
+  { url: '../', title: 'Home' },
+  { url: '../projects/', title: 'Projects' },
+  { url: '../contact/', title: 'Contact' },
+  { url: '../CV/', title: 'CV' },
   { url: 'https://github.com/CherieXiao', title: 'GitHub' }
 ];
 
