@@ -95,3 +95,16 @@ h1,h2,h3,h4,h5,h6 {
   line-height: 1.1;
   text-wrap: balance;
 }
+
+html {
+  color-scheme: light dark;
+}
+
+body {
+  background-color: Canvas;
+  color: CanvasText;
+}
+
+nav {
+  --border-color: oklch(50% 10% 200 / 40%);
+}
