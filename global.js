@@ -61,6 +61,7 @@ document.body.insertAdjacentHTML(
 	  </label>`
 );
 
+
 const select = document.querySelector('.color-scheme select');
 
 if ('colorScheme' in localStorage) {
@@ -70,10 +71,8 @@ if ('colorScheme' in localStorage) {
 }
 
 select.addEventListener('input', function (event) {
-  const storedScheme = localStorage.colorScheme;
-  console.log('color scheme changed to', event.target.value);
-  document.documentElement.style.setProperty('color-scheme', event.target.value);
+  const selectedScheme = event.target.value;
+  document.documentElement.style.setProperty('color-scheme', selectedScheme);
   localStorage.colorScheme = selectedScheme;
 });
-
 
