@@ -10,6 +10,11 @@
 </head>
 <body>
     <script type="module" src="global.js"></script>
+    <script src="index.js" type="module" defer></script>
+    <h2>Latest Projects</h2>
+    <div class="projects">
+        <!-- Dynamically added content will appear here -->
+    </div>
     <!-- <nav>
         <a class="current" href="index.html">Home</a>
         <a href="projects/index.html">Projects</a>
@@ -23,7 +28,19 @@
     </p>
     <img alt="selfie" src="images/selfie.JPG" 
         style="max-width:128px; max-height:128px; width:auto; height:auto;"/>
-
+    <div id="profile-stats">
+        <h2>My GitHub Stats</h2>
+        <dl>
+            <dt>Followers</dt>
+            <dd id="followers">--</dd>
+            <dt>Following</dt>
+            <dd id="following">--</dd>
+            <dt>Public Repos</dt>
+            <dd id="public-repos">--</dd>
+            <dt>Public Gists</dt>
+            <dd id="public-gists">--</dd>
+        </dl>
+    </div>    
   
 </body>
 </html>
