@@ -1,16 +1,9 @@
 console.log('IT’S ALIVE!');
 
+
 function $$(selector, context = document) {
   return Array.from(context.querySelectorAll(selector));
 }
-
-// const navLinks = $$("nav a");
-
-// let currentLink = navLinks.find(
-//   (a) => a.host === location.host && a.pathname === location.pathname
-// );
-
-// currentLink?.classList.add('current');
 
 let pages = [
   { url: '', title: 'Home' },
@@ -99,7 +92,10 @@ export function renderProjects(projects, containerElement) {
     article.innerHTML = `
       <h2>${project.title}</h2>
       <img src="${project.image}" alt="${project.title}" />
-      <p>${project.description}</p>
+      <div class="project-info">
+        <p>${project.description}</p>
+        <p class="project-year">Year: ${project.year}</p>
+      </div>
     `;
     containerElement.appendChild(article);
   });
@@ -115,3 +111,5 @@ export async function fetchGitHubData(username) {
       return null;
   }
 }
+
+

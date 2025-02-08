@@ -144,3 +144,70 @@ html.dark-mode {
   grid-row: 2;
   margin: 0;
 }
+
+
+
+
+.container {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  flex: 1;
+}
+
+#pie-chart {
+  width: 100%;
+  max-width: 25em;
+  min-width: 5em; 
+  flex-shrink: 1;
+  aspect-ratio: 1; 
+}
+
+.legend {
+  flex: 1;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  list-style: none;
+  padding: 1rem;
+  min-width: 1em;
+  max-width: 40%;
+}
+
+.legend li {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  min-width: 9rem;
+}
+
+.legend em {
+  font-style: italic;
+  font-size: 0.85rem;
+  color: gray;
+}
+
+.swatch {
+  display: inline-block;
+  width: 1em;
+  height: 1em;
+  background-color: var(--color);
+  border-radius: 4px;
+}
+
+@media (max-width: 600px) {
+  .container {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  #pie-chart {
+    max-width: 18em;
+    min-width: 10em;
+  }
+
+  .legend {
+    justify-content: center;
+    max-width: 100%;
+  }
+}
