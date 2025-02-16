@@ -150,36 +150,31 @@ html.dark-mode {
   align-items: center;
   gap: 2rem;
   width: 100%;
+  min-width: 10em;
   margin-bottom: 2rem;
 }
 
 #pie-chart {
   max-width: 20em;
-  min-width: 3em; /* Reduce the minimum size */
+  min-width: 3em;
   flex-shrink: 1;
   aspect-ratio: 1;
   flex: 0 0 auto;
 }
 
 .legend {
-  flex: 1;
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(9em, 1fr));
   gap: 1rem;
   list-style: none;
   padding: 1rem;
-  min-width: 1em;
-
-  border: 2px solid var(--color-accent);
-  border-radius: 8px; /* Optional: adds rounded corners */
-  background-color: color-mix(in oklch, var(--color-accent), canvas 95%);
 }
 
 .legend li {
   display: flex;
   align-items: center;
   gap: 0.5rem;
-  min-width: 9rem;
+  cursor: pointer;
 }
 
 .legend em {
@@ -196,3 +191,9 @@ html.dark-mode {
   border-radius: 4px;
 }
 
+&:has(path:hover) {
+  path:not(:hover) {
+    opacity: 0.5;
+    transition: 300ms;
+  }
+}
