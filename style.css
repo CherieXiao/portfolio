@@ -191,9 +191,20 @@ html.dark-mode {
   border-radius: 4px;
 }
 
-&:has(path:hover) {
-  path:not(:hover) {
-    opacity: 0.5;
-    transition: 300ms;
+svg:has(path:hover) path:not(:hover) {
+  opacity: 0.5;
+  transition: 300ms;
+}
+
+path {
+  transition: 300ms;
+}
+
+.selected {
+  --color: oklch(60% 45% 0) !important;
+
+  &:is(path) {
+    fill: var(--color);
+    cursor: pointer;
   }
 }
