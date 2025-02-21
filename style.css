@@ -202,9 +202,22 @@ path {
 
 .selected {
   --color: oklch(60% 45% 0) !important;
-
-  &:is(path) {
-    fill: var(--color);
-    cursor: pointer;
-  }
 }
+
+.selected path {
+  fill: var(--color);
+}
+
+path {
+  cursor: pointer;
+}
+.selected {
+  --color: oklch(60% 45% 0) !important;
+}
+
+.selected:is(path) {
+  fill: var(--color) !important;
+}
+
+
+
