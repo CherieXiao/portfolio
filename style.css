@@ -202,22 +202,18 @@ path {
 
 .selected {
   --color: oklch(60% 45% 0) !important;
+
+  &:is(path) {
+    fill: var(--color);
+    cursor: pointer;
+  }
 }
 
-.selected path {
-  fill: var(--color);
+.selected-legend .swatch {
+  background: oklch(60% 45% 0) !important;
+  transition: background-color 0.2s;
 }
 
-path {
-  cursor: pointer;
+.searchBar {
+  margin-bottom: 2rem;
 }
-.selected {
-  --color: oklch(60% 45% 0) !important;
-}
-
-.selected:is(path) {
-  fill: var(--color) !important;
-}
-
-
-
