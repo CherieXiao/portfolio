@@ -94,6 +94,8 @@ function processCommits() {
 function createScatterplot() {
     const width = 1000;
     const height = 600;
+
+    const [minLines, maxLines] = d3.extent(commits, (d) => d.totalLines);
     
     const svg = d3
       .select('#chart')
@@ -108,26 +110,35 @@ function createScatterplot() {
       .nice();
     
     const yScale = d3.scaleLinear().domain([0, 24]).range([height, 0]);
+    const rScale = d3
+        .scaleSqrt() // Change only this line
+        .domain([minLines, maxLines])
+        .range([2, 30]);
     
     const dots = svg.append('g').attr('class', 'dots');
+    const sortedCommits = d3.sort(commits, (d) => -d.totalLines);
     
     dots
         .selectAll('circle')
-        .data(commits)
+        .data(sortedCommits)
         .join('circle')
         .attr('cx', (d) => xScale(d.datetime))
         .attr('cy', (d) => yScale(d.hourFrac))
-        .attr('r', 5)
+        .attr('r', (d) => rScale(d.totalLines))
+        .style('fill-opacity', 0.7) // Add transparency for overlapping dots
         .attr('fill', 'steelblue')
-        .on('mouseenter', (event, commit) => {
+        .on('mouseenter', function (event, d, i) {
+            d3.select(event.currentTarget).style('fill-opacity', 1); // Full opacity on hover
             updateTooltipContent(commit);
             updateTooltipVisibility(true);
             updateTooltipPosition(event);
         })
-        .on('mouseleave', () => {
-            updateTooltipContent({});
-            updateTooltipVisibility(false);
-        });
+        .on('mouseleave', function () {
+            d3.select(event.currentTarget).style('fill-opacity', 0.7); // Restore transparen
+                    updateTooltipContent({});
+                    updateTooltipVisibility(false);
+                })
+        .selectAll('circle').data(sortedCommits).join('circle');
     
     const margin = { top: 10, right: 10, bottom: 30, left: 20 };
     const usableArea = {
@@ -195,3 +206,4 @@ function updateTooltipPosition(event) {
     tooltip.style.left = `${event.clientX}px`;
     tooltip.style.top = `${event.clientY}px`;
   }
+
