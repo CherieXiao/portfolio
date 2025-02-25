@@ -1,4 +1,5 @@
 let data = [];
+let xScale, yScale;
 
 async function loadData() {
     data = await d3.csv('loc.csv', (row) => ({
@@ -103,13 +104,13 @@ function createScatterplot() {
       .attr('viewBox', `0 0 ${width} ${height}`)
       .style('overflow', 'visible');
     
-    const xScale = d3
+    xScale = d3
       .scaleTime()
       .domain(d3.extent(commits, (d) => d.datetime))
       .range([0, width])
       .nice();
     
-    const yScale = d3.scaleLinear().domain([0, 24]).range([height, 0]);
+    yScale = d3.scaleLinear().domain([0, 24]).range([height, 0]);
     const rScale = d3
         .scaleSqrt() // Change only this line
         .domain([minLines, maxLines])
@@ -125,16 +126,16 @@ function createScatterplot() {
         .attr('cx', (d) => xScale(d.datetime))
         .attr('cy', (d) => yScale(d.hourFrac))
         .attr('r', (d) => rScale(d.totalLines))
-        .style('fill-opacity', 0.7) // Add transparency for overlapping dots
+        .style('fill-opacity', 0.7)
         .attr('fill', 'steelblue')
-        .on('mouseenter', function (event, d, i) {
-            d3.select(event.currentTarget).style('fill-opacity', 1); // Full opacity on hover
-            updateTooltipContent(commit);
+        .on('mouseenter', function (event, d) { 
+            d3.select(event.currentTarget).style('fill-opacity', 1);
+            updateTooltipContent(d); 
             updateTooltipVisibility(true);
             updateTooltipPosition(event);
         })
         .on('mouseleave', function () {
-            d3.select(event.currentTarget).style('fill-opacity', 0.7); // Restore transparen
+            d3.select(event.currentTarget).style('fill-opacity', 0.7);
                     updateTooltipContent({});
                     updateTooltipVisibility(false);
                 })
@@ -159,8 +160,8 @@ function createScatterplot() {
         .attr('class', 'gridlines')
         .attr('transform', `translate(${usableArea.left}, 0)`);
 
-// Create gridlines as an axis with no labels and full-width ticks
-gridlines.call(d3.axisLeft(yScale).tickFormat('').tickSize(-usableArea.width));
+    // Create gridlines as an axis with no labels and full-width ticks
+    gridlines.call(d3.axisLeft(yScale).tickFormat('').tickSize(-usableArea.width));
 
     // Create the axes
     const xAxis = d3.axisBottom(xScale);
@@ -180,6 +181,7 @@ gridlines.call(d3.axisLeft(yScale).tickFormat('').tickSize(-usableArea.width));
         .attr('transform', `translate(${usableArea.left}, 0)`)
         .call(yAxis);
 
+    brushSelector();
 
 }
 
@@ -205,5 +207,85 @@ function updateTooltipPosition(event) {
     const tooltip = document.getElementById('commit-tooltip');
     tooltip.style.left = `${event.clientX}px`;
     tooltip.style.top = `${event.clientY}px`;
+}
+
+let brushSelection = null;
+
+function brushSelector() {
+    const svg = document.querySelector('svg');
+    d3.select(svg)
+      .call(d3.brush().on('start brush end', brushed))
+      .selectAll('.dots, .overlay ~ *').raise();
+}
+
+
+function brushed(event) {
+    brushSelection = event.selection;
+    updateSelection();
+    updateSelectionCount();
+    updateLanguageBreakdown();
   }
 
+  function isCommitSelected(commit) {
+    if (!brushSelection) return false;
+    const x = xScale(commit.datetime);
+    const y = yScale(commit.hourFrac);
+    return (
+      x >= brushSelection[0][0] &&
+      x <= brushSelection[1][0] &&
+      y >= brushSelection[0][1] &&
+      y <= brushSelection[1][1]
+    );
+  }
+
+function updateSelection() {
+  d3.selectAll('circle').classed('selected', (d) => isCommitSelected(d));
+}
+
+
+function updateSelectionCount() {
+    const selectedCommits = brushSelection
+      ? commits.filter(isCommitSelected)
+      : [];
+  
+    const countElement = document.getElementById('selection-count');
+    countElement.textContent = `${
+      selectedCommits.length || 'No'
+    } commits selected`;
+  
+    return selectedCommits;
+  }
+
+  function updateLanguageBreakdown() {
+    const selectedCommits = brushSelection
+      ? commits.filter(isCommitSelected)
+      : [];
+    const container = document.getElementById('language-breakdown');
+  
+    if (selectedCommits.length === 0) {
+      container.innerHTML = '';
+      return;
+    }
+    const requiredCommits = selectedCommits.length ? selectedCommits : commits;
+    const lines = requiredCommits.flatMap((d) => d.lines);
+
+    const breakdown = d3.rollup(
+      lines,
+      (v) => v.length,
+      (d) => d.type
+    );
+
+    container.innerHTML = '';
+  
+    for (const [language, count] of breakdown) {
+      const proportion = count / lines.length;
+      const formatted = d3.format('.1~%')(proportion);
+  
+      container.innerHTML += `
+              <dt>${language}</dt>
+              <dd>${count} lines (${formatted})</dd>
+          `;
+    }
+  
+    return breakdown;
+  }
