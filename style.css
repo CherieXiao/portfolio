@@ -145,6 +145,22 @@ html.dark-mode {
   margin: 0;
 }
 
+.stats {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1rem;
+}
+
+.stats dt {
+  grid-row: 1;
+  font-weight: bold;
+}
+
+.stats dd {
+  grid-row: 2;
+  margin: 0;
+}
+
 .container {
   display: flex;
   align-items: center;
@@ -216,4 +232,14 @@ path {
 
 .searchBar {
   margin-bottom: 2rem;
+}
+
+.gridlines path {
+  stroke: none;
+}
+
+.gridlines line {
+  stroke: #ccc;
+  stroke-opacity: 0.6;
+  shape-rendering: crispEdges;
 }
