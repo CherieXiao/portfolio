@@ -76,6 +76,6 @@
         "description": "Visualization of Bike Traffic and Station Situation in Boston ",
         "year": "2025",
         "url": "https://cheriexiao.github.io/bikewatching/", 
-        "image": "https://github.com/CherieXiao/portfolio/blob/main/images/bikewatching.png"
+        "image": "../images/bikewatching.png"
     }
 ]
