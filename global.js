@@ -95,6 +95,7 @@ export function renderProjects(projects, containerElement) {
       <img src="${project.image}" alt="${project.title}" />
       <div class="project-info">
         <p>${project.description}</p>
+        ${project.url ? `<p class="project-link"><a href="${project.url}" target="_blank">Project URL→</a></p>` : ''}
         <p class="project-year">Year: ${project.year}</p>
       </div>
     `;

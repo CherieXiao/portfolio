@@ -70,5 +70,12 @@
         "year": "2025",
         "image": "https://vis-society.github.io/labs/2/images/empty.svg",
         "description": "Not release yet"
+    },
+    {
+        "title": "DSC106 lab07: Bikewatching",
+        "description": "Visualization of Bike Traffic and Station Situation in Boston ",
+        "year": "2025",
+        "url": "https://cheriexiao.github.io/bikewatching/", 
+        "image": "/bikewatching.png"
     }
 ]
