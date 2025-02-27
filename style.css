@@ -293,3 +293,23 @@ dl.info[hidden]:not(:hover, :focus-within) {
 circle.selected {
   fill: #ff6b6b;
 }
+
+.projects article img {
+  width: 100%;
+  height: auto;
+  max-height: 200px;
+  object-fit: cover;
+  border-radius: 8px;
+  border: 1px solid oklch(50% 10% 200 / 20%);
+  aspect-ratio: 16/9;
+}
+
+.projects article img:not([src]) {
+  background-color: oklch(90% 0.05 200 / 0.2);
+  content: "Image not available";
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: oklch(50% 0.1 200);
+  font-style: italic;
+}
