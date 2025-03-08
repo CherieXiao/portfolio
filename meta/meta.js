@@ -1,5 +1,10 @@
 let data = [];
 let xScale, yScale;
+let selectedCommits = [];
+
+let commitProgress = 100;
+let timeScale;
+
 
 async function loadData() {
     data = await d3.csv('loc.csv', (row) => ({
@@ -17,6 +22,27 @@ async function loadData() {
 
 document.addEventListener('DOMContentLoaded', async () => {
   await loadData();
+  // Initialize slider and time display
+  const slider = document.getElementById('commitSlider');
+  const selectedTime = document.getElementById('selectedTime');
+
+  // Function to update time display
+  function updateTimeDisplay() {
+    const currentTime = timeScale.invert(commitProgress);
+    selectedTime.textContent = currentTime.toLocaleString('en', {
+      dateStyle: 'long',
+      timeStyle: 'short'
+    });
+  }
+
+  // Initial update
+  updateTimeDisplay();
+
+  // Event listener for slider input
+  slider.addEventListener('input', (event) => {
+    commitProgress = Number(event.target.value);
+    updateTimeDisplay();
+  });
 });
 
 let commits = d3.groups(data, (d) => d.commit);
@@ -47,6 +73,11 @@ function processCommits() {
   
         return ret;
       });
+      // Create time scale for slider
+    const [minTime, maxTime] = d3.extent(commits, d => d.datetime);
+    timeScale = d3.scaleTime()
+    .domain([minTime, maxTime])
+    .range([0, 100]);
   }
 
   function displayStats() {
@@ -130,12 +161,14 @@ function createScatterplot() {
         .attr('fill', 'steelblue')
         .on('mouseenter', function (event, d) { 
             d3.select(event.currentTarget).style('fill-opacity', 1);
+            d3.select(event.currentTarget).classed('selected', isCommitSelected(d));
             updateTooltipContent(d); 
             updateTooltipVisibility(true);
             updateTooltipPosition(event);
         })
-        .on('mouseleave', function () {
+        .on('mouseleave', function (event, d) {
             d3.select(event.currentTarget).style('fill-opacity', 0.7);
+            d3.select(event.currentTarget).classed('selected', isCommitSelected(d));
                     updateTooltipContent({});
                     updateTooltipVisibility(false);
                 })
@@ -219,24 +252,23 @@ function brushSelector() {
 }
 
 
-function brushed(event) {
-    brushSelection = event.selection;
-    updateSelection();
-    updateSelectionCount();
-    updateLanguageBreakdown();
-  }
+function brushed(evt) {
+  let brushSelection = evt.selection;
+  selectedCommits = !brushSelection
+    ? []
+    : commits.filter((commit) => {
+        let min = { x: brushSelection[0][0], y: brushSelection[0][1] };
+        let max = { x: brushSelection[1][0], y: brushSelection[1][1] };
+        let x = xScale(commit.date);
+        let y = yScale(commit.hourFrac);
 
-  function isCommitSelected(commit) {
-    if (!brushSelection) return false;
-    const x = xScale(commit.datetime);
-    const y = yScale(commit.hourFrac);
-    return (
-      x >= brushSelection[0][0] &&
-      x <= brushSelection[1][0] &&
-      y >= brushSelection[0][1] &&
-      y <= brushSelection[1][1]
-    );
-  }
+        return x >= min.x && x <= max.x && y >= min.y && y <= max.y;
+      });
+}
+
+function isCommitSelected(commit) {
+  return selectedCommits.includes(commit);
+}
 
 function updateSelection() {
   d3.selectAll('circle').classed('selected', (d) => isCommitSelected(d));
@@ -289,3 +321,45 @@ function updateSelectionCount() {
   
     return breakdown;
   }
+
+  function createFilterUI() {
+    const timeExtent = d3.extent(commits, d => d.datetime);
+    timeScale = d3.scaleTime()
+        .domain(timeExtent)
+        .range([0, 100]);
+
+    const container = d3.select('#chart')
+        .insert('div', ':first-child')
+        .attr('id', 'filter-container')
+        .style('display', 'flex')
+        .style('align-items', 'baseline');
+
+    const label = container.append('label')
+        .text('Show commits until: ');
+
+    label.append('input')
+        .attr('type', 'range')
+        .attr('min', 0)
+        .attr('max', 100)
+        .attr('value', commitProgress)
+        .style('flex', '1')
+        .on('input', function() {
+            commitProgress = +this.value;
+            updateTimeDisplay();
+            filterScatterplot();
+        });
+
+    label.append('time')
+        .attr('id', 'selectedTime')
+        .style('margin-left', 'auto');
+
+    updateTimeDisplay();
+}
+
+function updateTimeDisplay() {
+  const commitMaxTime = timeScale.invert(commitProgress);
+  d3.select('#selectedTime')
+      .text(commitMaxTime.toLocaleString(undefined, { dateStyle: 'long', timeStyle: 'short' }));
+}
+
+
